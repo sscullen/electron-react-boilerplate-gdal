@@ -7,6 +7,7 @@ import styles from './Home.css';
 type Props = {};
 
 import gdal from 'gdal';
+import ogr from 'gdal';
 
 // convert to geojson from shapefile
 // from osgeo import ogr
@@ -125,11 +126,49 @@ export default class Home extends Component<Props> {
     console.log("extent: " + JSON.stringify(layer.extent));
     console.log("srs: " + (layer.srs ? layer.srs.toWKT() : 'null'));
 
+
+    let multipolygon = new gdal.MultiPolygon()
+
+    // # Create ring #1
+    // ring1 = ogr.Geometry(ogr.wkbLinearRing)
+    // ring1.AddPoint(1204067.0548148106, 634617.5980860253)
+    // ring1.AddPoint(1204067.0548148106, 620742.1035724243)
+    // ring1.AddPoint(1215167.4504256917, 620742.1035724243)
+    // ring1.AddPoint(1215167.4504256917, 634617.5980860253)
+    // ring1.AddPoint(1204067.0548148106, 634617.5980860253)
+
+    // # Create polygon #1
+    // poly1 = ogr.Geometry(ogr.wkbPolygon)
+    // poly1.AddGeometry(ring1)
+    // multipolygon.AddGeometry(poly1) 
+    let polygon_def = { type: 'Feature', properties: {}, geometry: { type: "MultiPolygon", coordinates: [[]]}}
+
+    console.log(polygon_def)
     for (let i = 0; i < layer.features.count(); i++) {
-        const geom = layer.features.get(i).getGeometry()
-        const wkt = geom.toWKT()
-        console.log(wkt)
+        let geom = layer.features.get(i).getGeometry()
+      
+        const geojson_geom = geom.toObject()
+        console.log(geojson_geom.coordinates[0][0])
+        console.log(geojson_geom.coordinates[0][1])
+        const coords = []
+        for (let polygon of geojson_geom.coordinates[0]) {
+          coords.push([polygon[0], polygon[1]])
+        }
+        polygon_def.geometry.coordinates[0].push(coords)
+
+        console.log(geojson_geom) 
     }
+
+    const json_string = JSON.stringify(polygon_def);
+    
+    fs.writeFile('jsontest.geojson', json_string, function(err) {
+      if(err) {
+        console.log(err);
+      } else {
+          console.log("The file was saved!");
+      }
+
+    } );
   }
 
   render() {
