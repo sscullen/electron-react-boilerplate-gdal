@@ -5,11 +5,13 @@ import App from './containers/App';
 import HomePage from './containers/HomePage';
 import CounterPage from './containers/CounterPage';
 
+import MainContainer from './containers/MainContainerPage';
+
 export default () => (
   <App>
     <Switch>
       <Route path={routes.COUNTER} component={CounterPage} />
-      <Route path={routes.HOME} component={HomePage} />
+      <Route path={routes.HOME} component={MainContainer} />
     </Switch>
   </App>
 );

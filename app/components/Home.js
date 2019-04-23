@@ -66,7 +66,7 @@ var fs = require('fs');
 //             alert("An error ocurred reading the file :" + err.message);
 //             return;
 //         }
-        
+
 //         // document.getElementById("content-editor").value = data;
 //         // document.getElementById("actual-file").innerText = fileNames[0];
 //         var dataset = gdal.open("sample.shp");
@@ -104,11 +104,11 @@ export default class Home extends Component<Props> {
               this.handleShapefileSelection(fileNames[0]);
           }
           console.log(this)
-      }); 
+      });
     },false);
 
   }
-  
+
   handleShapefileSelection(filename) {
       fs.readFile(filename, 'utf-8', function (err, data) {
           if(err){
@@ -117,7 +117,7 @@ export default class Home extends Component<Props> {
           }
           console.log('I read file good')
         });
-          
+
     const dataset = gdal.open(filename);
     const layer = dataset.layers.get(0);
 
@@ -140,13 +140,13 @@ export default class Home extends Component<Props> {
     // # Create polygon #1
     // poly1 = ogr.Geometry(ogr.wkbPolygon)
     // poly1.AddGeometry(ring1)
-    // multipolygon.AddGeometry(poly1) 
+    // multipolygon.AddGeometry(poly1)
     let polygon_def = { type: 'Feature', properties: {}, geometry: { type: "MultiPolygon", coordinates: [[]]}}
 
     console.log(polygon_def)
     for (let i = 0; i < layer.features.count(); i++) {
         let geom = layer.features.get(i).getGeometry()
-      
+
         const geojson_geom = geom.toObject()
         console.log(geojson_geom.coordinates[0][0])
         console.log(geojson_geom.coordinates[0][1])
@@ -156,11 +156,11 @@ export default class Home extends Component<Props> {
         }
         polygon_def.geometry.coordinates[0].push(coords)
 
-        console.log(geojson_geom) 
+        console.log(geojson_geom)
     }
 
     const json_string = JSON.stringify(polygon_def);
-    
+
     fs.writeFile('jsontest.geojson', json_string, function(err) {
       if(err) {
         console.log(err);
